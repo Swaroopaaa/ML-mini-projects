@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Detector 🤍🎭🎵</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background: url("https://i.postimg.cc/7LcQM3LF/drizzle-rainy-day-in-autumn-background-and-wallpaper-generative-ai-photo.jpg") no-repeat center center fixed;
+            background-size: cover;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            overflow: hidden;
+            position: relative;
+        }
+        h1 {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+        p {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        button {
+            font-size: 22px;
+            background-color: #8e44ad;
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            cursor: pointer;
+            border-radius: 50px;
+            transition: 0.3s;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        button:hover {
+            background-color: #6c3483;
+        }
+        #result {
+            margin-top: 30px;
+            font-size: 24px;
+            font-weight: bold;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            display: none;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        @keyframes floatingHearts {
+            0% { transform: translateY(0px); opacity: 1; }
+            100% { transform: translateY(-100vh); opacity: 0; }
+        }
+        .floating-heart {
+            position: absolute;
+            font-size: 40px;
+            color: white;
+            animation: floatingHearts 5s linear infinite;
+        }
+    </style>
+</head>
+<body>
+    <h1>🤍 Welcome to Mood Detector 🎭🎶</h1>
+    <p>Click the button below to detect your mood and play a song! 🎵😊</p>
+    <button onclick="detectMood()">🤍 Detect Mood & Play Song 🎧</button>
+    <div id="result"></div>
+
+    <script>
+        function createFloatingHeart() {
+            let heart = document.createElement('div');
+            heart.innerHTML = '🤍';
+            heart.classList.add('floating-heart');
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => { heart.remove(); }, 5000);
+        }
+        setInterval(createFloatingHeart, 800);
+
+        function detectMood() {
+            fetch('/detect_mood', { method: 'POST' })
+            .then(response => response.json())
+            .then(data => {
+                let resultDiv = document.getElementById('result');
+                if (data.error) {
+                    resultDiv.innerHTML = "<span style='color: yellow;'>⚠ Error: " + data.error + "</span>";
+                } else {
+                    resultDiv.innerHTML = "🤍 Mood detected: <b>" + data.mood + "</b> 🎭<br>🎶 Now playing: <b>" + data.song + "</b> 🎧";
+                }
+                resultDiv.style.display = 'block';
+                setTimeout(() => { resultDiv.style.opacity = '1'; }, 50);
+            })
+            .catch(error => {
+                document.getElementById('result').innerHTML = "<span style='color: yellow;'>⚠ Error: " + error.message + "</span>";
+            });
+        }
+    </script>
+</body>
+</html>
+
+
